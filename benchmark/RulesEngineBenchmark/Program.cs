@@ -8,7 +8,6 @@ using RulesEngine.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Threading;
 
 namespace RulesEngineBenchmark
 {
@@ -72,7 +71,7 @@ namespace RulesEngineBenchmark
         {
             foreach (var workflow in workflow)
             {
-                _ = rulesEngine.ExecuteAllRulesAsync(workflow.WorkflowName, CancellationToken.None, ruleInput).Result;
+                _ = rulesEngine.ExecuteAllRulesAsync(workflow.WorkflowName, ruleInput).Result;
             }
         }
     }
