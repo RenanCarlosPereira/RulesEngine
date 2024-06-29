@@ -12,7 +12,6 @@ using System.IO;
 using System.Linq;
 using static RulesEngine.Extensions.ListofRuleResultTreeExtension;
 using Microsoft.EntityFrameworkCore;
-using System.Threading;
 
 namespace DemoApp
 {
@@ -58,7 +57,7 @@ namespace DemoApp
 
             string discountOffered = "No discount offered.";
 
-            List<RuleResultTree> resultList = bre.ExecuteAllRulesAsync("Discount", CancellationToken.None, inputs).Result;
+            List<RuleResultTree> resultList = bre.ExecuteAllRulesAsync("Discount", inputs).Result;
 
             resultList.OnSuccess((eventName) => {
                 discountOffered = $"Discount offered is {eventName} % over MRP.";

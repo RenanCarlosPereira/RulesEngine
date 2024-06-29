@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.IO;
-using System.Threading;
 using static RulesEngine.Extensions.ListofRuleResultTreeExtension;
 
 namespace DemoApp
@@ -46,7 +45,7 @@ namespace DemoApp
 
             string discountOffered = "No discount offered.";
 
-            List<RuleResultTree> resultList = bre.ExecuteAllRulesAsync("Discount", CancellationToken.None, inputs).Result;
+            List<RuleResultTree> resultList = bre.ExecuteAllRulesAsync("Discount", inputs).Result;
 
             resultList.OnSuccess((eventName) => {
                 discountOffered = $"Discount offered is {eventName} % over MRP.";

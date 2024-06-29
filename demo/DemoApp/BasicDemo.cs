@@ -5,7 +5,6 @@ using RulesEngine.Models;
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
-using System.Threading;
 using static RulesEngine.Extensions.ListofRuleResultTreeExtension;
 
 namespace DemoApp
@@ -43,7 +42,7 @@ namespace DemoApp
                     datas
               };
 
-            List<RuleResultTree> resultList = bre.ExecuteAllRulesAsync("Test Workflow Rule 1", CancellationToken.None, inputs).Result;
+            List<RuleResultTree> resultList = bre.ExecuteAllRulesAsync("Test Workflow Rule 1", inputs).Result;
 
             bool outcome = false;
 
