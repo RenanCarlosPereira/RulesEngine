@@ -37,7 +37,7 @@ namespace DemoApp.Demos
 
             var bre = new RulesEngine.RulesEngine(workflow, null);
 
-            var ret = await bre.ExecuteAllRulesAsync("Discount", rp);
+            var ret = await bre.ExecuteAllRulesAsync("Discount", CancellationToken.None, rp);
 
             ret.OnSuccess((eventName) =>
             {

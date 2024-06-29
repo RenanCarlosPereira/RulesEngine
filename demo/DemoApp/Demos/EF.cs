@@ -110,7 +110,7 @@ namespace DemoApp.Demos
 
                 foreach (var workflow in wfr)
                 {
-                    var ret = await bre.ExecuteAllRulesAsync(workflow.WorkflowName, rp);
+                    var ret = await bre.ExecuteAllRulesAsync(workflow.WorkflowName, CancellationToken.None, rp);
 
                     ret.OnSuccess((eventName) =>
                     {
