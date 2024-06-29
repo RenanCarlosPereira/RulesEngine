@@ -13,12 +13,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using static RulesEngine.Extensions.ListofRuleResultTreeExtension;
 
-namespace DemoApp.Demos
+namespace DemoApp
 {
     public class JSON
     {
         public async Task Run(CancellationToken ct = default)
-        {            
+        {
             Console.WriteLine($"Running {nameof(JSON)}....");
 
             var rp = new RuleParameter[] {
@@ -39,13 +39,11 @@ namespace DemoApp.Demos
 
             var ret = await bre.ExecuteAllRulesAsync("Discount", CancellationToken.None, rp);
 
-            ret.OnSuccess((eventName) =>
-            {
+            ret.OnSuccess((eventName) => {
                 Console.WriteLine($"Discount offered is {eventName} % over MRP.");
             });
 
-            ret.OnFail(() =>
-            {
+            ret.OnFail(() => {
                 Console.WriteLine("The user is not eligible for any discount.");
             });
         }

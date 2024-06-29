@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Newtonsoft.Json;
 using RulesEngine.Models;
 
-namespace DemoApp.Demos
+namespace DemoApp
 {
     public class RulesEngineContext : DbContext
     {

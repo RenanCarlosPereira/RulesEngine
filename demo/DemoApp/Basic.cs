@@ -9,7 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using static RulesEngine.Extensions.ListofRuleResultTreeExtension;
 
-namespace DemoApp.Demos
+namespace DemoApp
 {
     public class Basic
     {
@@ -30,7 +30,7 @@ namespace DemoApp.Demos
                     ]
                 }
             };
-            
+
             var bre = new RulesEngine.RulesEngine(workflows);
 
             var rp = new RuleParameter[] {
@@ -44,14 +44,12 @@ namespace DemoApp.Demos
             //Different ways to show test results:
             outcome = ret.TrueForAll(r => r.IsSuccess);
 
-            ret.OnSuccess((eventName) =>
-            {
+            ret.OnSuccess((eventName) => {
                 Console.WriteLine($"Result '{eventName}' is as expected.");
                 outcome = true;
             });
 
-            ret.OnFail(() =>
-            {
+            ret.OnFail(() => {
                 outcome = false;
             });
 

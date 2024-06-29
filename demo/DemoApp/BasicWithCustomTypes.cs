@@ -10,7 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using static RulesEngine.Extensions.ListofRuleResultTreeExtension;
 
-namespace DemoApp.Demos
+namespace DemoApp
 {
     public class BasicWithCustomTypes
     {
@@ -18,7 +18,7 @@ namespace DemoApp.Demos
         {
             public static bool CheckContains(string check, string valList)
             {
-                if (String.IsNullOrEmpty(check) || String.IsNullOrEmpty(valList))
+                if (string.IsNullOrEmpty(check) || string.IsNullOrEmpty(valList))
                     return false;
 
                 var list = valList.Split(',').ToList();
@@ -44,7 +44,7 @@ namespace DemoApp.Demos
             };
 
             var reSettings = new ReSettings {
-                CustomTypes = [ typeof(Utils) ]
+                CustomTypes = [typeof(Utils)]
             };
 
             var bre = new RulesEngine.RulesEngine(workflows, reSettings);
@@ -55,12 +55,10 @@ namespace DemoApp.Demos
 
             var ret = await bre.ExecuteAllRulesAsync("Test Workflow Rule 1", rp);
 
-            ret.OnSuccess((eventName) =>
-            {
+            ret.OnSuccess((eventName) => {
                 Console.WriteLine($"Result '{eventName}' is as expected.");
             });
-            ret.OnFail(() =>
-            {
+            ret.OnFail(() => {
                 Console.WriteLine($"Test outcome: false");
             });
         }

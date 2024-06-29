@@ -11,7 +11,7 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace DemoApp.Demos
+namespace DemoApp
 {
     public class NestedInput
     {
@@ -26,7 +26,7 @@ namespace DemoApp.Demos
             Console.WriteLine($"Running {nameof(NestedInput)}....");
 
             var rp = new RuleParameter[] {
-                new RuleParameter("input1", new 
+                new RuleParameter("input1", new
                 {
                     SimpleProp = "simpleProp",
                     NestedProp = new {
@@ -52,7 +52,7 @@ namespace DemoApp.Demos
             var files = Directory.GetFiles(dir, "NestedInput.json", SearchOption.AllDirectories);
             if (files == null || files.Length == 0)
                 throw new Exception("Rules not found.");
-            
+
             var fileData = await File.ReadAllTextAsync(files[0]);
             var Workflows = JsonConvert.DeserializeObject<List<Workflow>>(fileData);
 
@@ -62,11 +62,9 @@ namespace DemoApp.Demos
             {
                 var ret = await bre.ExecuteAllRulesAsync(workflow.WorkflowName, rp);
 
-                ret.OnSuccess((eventName) =>
-                {
+                ret.OnSuccess((eventName) => {
                     Console.WriteLine($"evaluation resulted in success - {eventName}");
-                }).OnFail(() =>
-                {
+                }).OnFail(() => {
                     Console.WriteLine($"evaluation resulted in failure");
                 });
             }

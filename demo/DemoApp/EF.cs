@@ -1,23 +1,28 @@
 ﻿// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using DemoApp.Demos;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using RulesEngine.Extensions;
+using Newtonsoft.Json.Converters;
 using RulesEngine.Models;
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using static RulesEngine.Extensions.ListofRuleResultTreeExtension;
 
-namespace DemoApp.Demos
+namespace DemoApp
 {
-    public class MultipleWorkflows
+    public class EF
     {
         public async Task Run(CancellationToken ct = default)
         {
-            Console.WriteLine($"Running {nameof(MultipleWorkflows)}....");
+            Console.WriteLine($"Running {nameof(EF)}....");
 
             var workflows = new Workflow[] {
                 new Workflow {
@@ -41,7 +46,7 @@ namespace DemoApp.Demos
                     WorkflowName = "Test Workflow2",
                     Rules = new List<Rule> {
                         new Rule {
-                            RuleName = "Test Rule",
+                            RuleName = "Test Rule3",
                             SuccessMessage = "Count is greater",
                             ErrorMessage = "Under Expected",
                             Expression = "count > 3",
@@ -52,7 +57,7 @@ namespace DemoApp.Demos
                     WorkflowName = "Test Workflow3",
                     Rules = new List<Rule> {
                         new Rule {
-                            RuleName = "Test Rule",
+                            RuleName = "Test Rule4",
                             Expression = "1 == 1",
                             Actions = new RuleActions() {
                                 OnSuccess = new ActionInfo {
@@ -69,7 +74,7 @@ namespace DemoApp.Demos
                     WorkflowName = "Test Workflow4",
                     Rules = new List<Rule> {
                         new Rule {
-                            RuleName = "Test Rule",
+                            RuleName = "Test Rule5",
                             Expression = "1 == 1",
                             Actions = new RuleActions() {
                                 OnSuccess = new ActionInfo {
@@ -84,33 +89,38 @@ namespace DemoApp.Demos
                 }
             };
 
-            var bre = new RulesEngine.RulesEngine(workflows, null);
-
-            var inputs = new RuleParameter[] {
-                new RuleParameter("input1", new { count = 1 })
-            };
-
-            foreach(var workflow in workflows)
+            Workflow[] wfr = null;
+            using (var db = new RulesEngineContext())
             {
-                var ret = await bre.ExecuteAllRulesAsync(workflow.WorkflowName, inputs);
-
-                var outcome = false;
-
-                //Different ways to show test results:
-                outcome = ret.TrueForAll(r => r.IsSuccess);
-
-                ret.OnSuccess((eventName) =>
+                if (await db.Database.EnsureCreatedAsync(ct))
                 {
-                    Console.WriteLine($"Result '{eventName}' is as expected.");
-                    outcome = true;
-                });
+                    await db.Workflows.AddRangeAsync(workflows, ct);
+                    await db.SaveChangesAsync(ct);
+                }
 
-                ret.OnFail(() =>
+                wfr = db.Workflows.Include(i => i.Rules).ThenInclude(i => i.Rules).ToArray();
+            }
+
+            if (wfr != null)
+            {
+                var rp = new RuleParameter[] {
+                    new RuleParameter("input1", new { count = 1 })
+                };
+
+                var bre = new RulesEngine.RulesEngine(wfr, null);
+
+                foreach (var workflow in wfr)
                 {
-                    outcome = false;
-                });
+                    var ret = await bre.ExecuteAllRulesAsync(workflow.WorkflowName, CancellationToken.None, rp);
 
-                Console.WriteLine($"Test outcome: {outcome}.");
+                    ret.OnSuccess((eventName) => {
+                        Console.WriteLine($"Discount offered is {eventName} % over MRP.");
+                    });
+
+                    ret.OnFail(() => {
+                        Console.WriteLine("The user is not eligible for any discount.");
+                    });
+                }
             }
         }
     }
